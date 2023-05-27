@@ -18,9 +18,12 @@ namespace BecasGestor
         public string Apellido { get; set; }    
         public string DNI { get; set; }
 
+        public  decimal Beneficio;
+
         public Alumno()
         {
             lb = new List<Beca>();
+            lc = new List<Cuota>();
         }
         public Alumno (string pLegajo, string pNombre="", string pApellido = "", string pDNI = "", string pCategoria = "sin asignar") : this() 
         {
@@ -61,6 +64,14 @@ namespace BecasGestor
             return lb.Count;
         }
 
+        public decimal RetornaTotalDeBecas ()
+        {
+            decimal total = 0;
+            foreach (Beca b in lb) { total += b.Importe; }
+            return total;
+        }
+        
+
 
     }
     public class Ingresante : Alumno
@@ -81,7 +92,7 @@ namespace BecasGestor
             Categoria = "Ingresante";        
         }
 
-        public int Beneficio = 10;
+        public new decimal Beneficio = 0.1m;
         
     }
     public class Grado : Alumno
@@ -98,7 +109,7 @@ namespace BecasGestor
         }
         public Grado(string pLegajo, string pNombre = "", string pApellido = "", string pDNI = "") : base(pLegajo, pNombre, pApellido, pDNI) 
         { Categoria = "Grado";}
-        public int Beneficio = 5;
+        public  new decimal Beneficio = 0.05m;
         
     }
     public class Posgrado : Alumno

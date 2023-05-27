@@ -13,11 +13,13 @@ namespace BecasGestor
         List<Alumno> la;
         List<string> ll;
         List<Beca> lb;
+        List<Cuota> lc;
         public Universidad()
         {
             la = new List<Alumno>();//lista de alumnos
             lb = new List<Beca>();//lista de becas
             ll = new List<string>();//lista de legajos
+            lc = new List<Cuota>();//lista de cuotas
         }
         public void AgregarAlumno(Alumno pAlumno)
         {
@@ -207,6 +209,74 @@ namespace BecasGestor
             }
                 
         }
+
+        public decimal RetornaNetoAPagarPorAlumno(Alumno pAlumno, Cuota pCuota ) 
+        {
+
+            try
+            {            
+                //capturamos el valor de la cuota listado en la universidad
+                Cuota cuotaAsignada = lc.Find(x => x.Id == pCuota.Id);
+                if (cuotaAsignada == null) throw new Exception("cuota no encontrada");
+                decimal valorCuota = cuotaAsignada.Valor;
+                //capturamos el monto de los las becas del alumno listado
+                Alumno alumnoSeleccionado = la.Find(x => x.Legajo == pAlumno.Legajo);
+                if (alumnoSeleccionado == null) throw new Exception("alumno no encontrado");
+                decimal totalBecas = alumnoSeleccionado.RetornaTotalDeBecas();
+                //si el monto de las becas es mayor o igual al de la cuota retornamos 0
+                if(totalBecas >= valorCuota) { return 0; }
+                else { return valorCuota - totalBecas; }                
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public decimal RetornaBeneficioAplicadoPorAlumno(Alumno pAlumno, Cuota pCuota)
+        {
+            try
+            {
+                //capturamos el valor de la cuota listado en la universidad
+                Cuota cuotaAsignada = lc.Find(x => x.Id == pCuota.Id);
+                if (cuotaAsignada == null) throw new Exception("cuota no encontrada");
+                decimal valorCuota = cuotaAsignada.Valor;
+                //capturamos el monto de los las becas del alumno listado
+                Alumno alumnoSeleccionado = la.Find(x => x.Legajo == pAlumno.Legajo);
+                if (alumnoSeleccionado == null) throw new Exception("alumno no encontrado");
+                decimal totalBecas = alumnoSeleccionado.RetornaTotalDeBecas();
+                //si el monto de las becas es mayor o igual al de la cuota retornamos 0
+                if (totalBecas >= valorCuota) { return 0; }
+                else
+                {
+                    decimal beneficio = alumnoSeleccionado.Beneficio;
+                    decimal beneficioAplicado = (valorCuota - totalBecas) * beneficio;
+                    return beneficioAplicado;
+                }
+            }
+            catch (Exception ex) { throw ex; }
+
+        }
+
+        public bool FiltrarIDFact(string pId)
+        {            
+            return lc.Any(x=> x.Id == pId);
+        }
+
+        public string RetornaLegajoPrimerAlumno()
+        {
+            return la.First().Legajo;
+        }
+
+        public string RetornaLegajoSiguiente(string pLegajo)
+        {
+
+            try
+            {            
+                int index = la.FindIndex(x => x.Legajo == pLegajo);
+                return la[index+1].Legajo;
+
+            }
+            catch (Exception ex) { throw ex; }
+
+        }
+        
 
     }
 }

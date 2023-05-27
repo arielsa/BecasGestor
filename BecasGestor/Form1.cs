@@ -69,9 +69,18 @@ namespace BecasGestor
             }
             return codigo;
         }
-        public int GeneradorID()
+        public string GeneradorID()
         {
-            return 1;
+            Random random = new Random();
+            int randomNumber = random.Next(100000, 999999);
+            char caracterRandom = (char)random.Next('A', 'D' + 1);
+            
+            string codigo = "FACT-"+ caracterRandom.ToString()+"-"+ randomNumber.ToString();
+            if (universidad.FiltrarIDFact(codigo))
+            {
+                GeneradorID();
+            }
+            return codigo;            
         }
         private void Mostrar (DataGridView pDGV, object pO)
         {
@@ -80,8 +89,18 @@ namespace BecasGestor
         }
         private void CrearAlumnoConCategoria(Alumno a, string numLegajo)
         {
+            //generamos un DNI por defecto para agilizar el proceso de pruebas:
+            //este DNI no lo pasamos por el proceso de validacion ya que solo
+            //nos sera funcional para agilizar las pruebas. En un hipotetico caso
+            //de pasar el programa a produccion se debera sacar.
+            Random random = new Random();
+            int rN3 = random.Next(100, 999);
+            int rN2 = random.Next(100, 999);
+            int rN1 = random.Next(10, 99);
+            string DNInoValidado = rN1.ToString()+"."+ rN2.ToString()+"."+rN3.ToString();
+
             rgx = new Regex(@"\d{2}.\d{3}.\d{3}");
-            String dni = Interaction.InputBox("ingrese DNI: ");
+            String dni = Interaction.InputBox("ingrese DNI: ","DNI", DNInoValidado);
             if ((!rgx.IsMatch(dni)) || dni.Length > 10) throw new Exception("Error de formato");// formato del dni
             a.DNI = dni;
             if (universidad.ValidarDNIAlumno(a))//si el dni pertenece a un alumno existente se borra el legajo creado y se va a excepcion
@@ -168,15 +187,15 @@ namespace BecasGestor
             {
                 string numLegajo = GeneradorDeLegajo();
                 rgx = new Regex(@"[A-Z]\d{8}-[A-Z]\d");
-                string nuevoLegajo = Interaction.InputBox("legajo creado por sistema: " +numLegajo,"nuevo legajo",numLegajo);
+                numLegajo = Interaction.InputBox("legajo creado por sistema: " +numLegajo,"nuevo legajo",numLegajo);
                 //Interaction.MsgBox(nuevoLegajo);
-                if (!(rgx.IsMatch(nuevoLegajo)) && nuevoLegajo.Length > 12) throw new Exception("Error de formato");// verificamos el formato del legajo
+                if (!(rgx.IsMatch(numLegajo)) && numLegajo.Length > 12) throw new Exception("Error de formato");// verificamos el formato del legajo
                 if (universidad.VerificarNumLegajo(numLegajo)) throw new Exception("legajo existente");//verificamos inexistencia del legajo
                 universidad.AñadirLegajo(numLegajo);// añadimos legajo
 
                 // creamos el alumno a partir del Legajo
                 rgx = new Regex("[1-3]");
-                String categoria =Interaction.InputBox("seleccione: Ingresante (1) Grado(2) Posgrado(3)");
+                String categoria =Interaction.InputBox("seleccione: Ingresante (1) Grado(2) Posgrado(3)","Categoria","1");
                 if (!(rgx.IsMatch(categoria) && categoria.Length == 1 )) throw new Exception("categoria incorrecta");               
                 //asignamos una categoria al alumno
                 switch (categoria)
@@ -269,7 +288,6 @@ namespace BecasGestor
                 Mostrar(dataGridBecasDeAlumno,null);
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
-
         }
 
         private void dataGridAlumno_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -283,7 +301,6 @@ namespace BecasGestor
                 if (dataGridAlumno.Rows.Count == 0) { dataGridBecasDeAlumno.DataSource = null; throw new Exception(); }
                 Alumno a = new Alumno(dataGridAlumno.SelectedRows[0].Cells[0].Value.ToString());
                 Mostrar(dataGridBecasDeAlumno, universidad.RetornaListaBecasDeAlumno(a));
-
             }
             catch (Exception) { }//dejamos vacio el catch para eitar el errror en la falta de allumnos
         }
@@ -302,8 +319,9 @@ namespace BecasGestor
             try
             {
                 //creamos un codigo valido:
-                rgx = new Regex(@"[a-z][A-Z]{2}\d{2}");
+                rgx = new Regex(@"[A-Z][A-Z]{2}\d{2}");
                 string codigo = Interaction.InputBox("ingrese codigo.(dos letras mayusculas + dos numeros)\n ej.AD37 \n codigo sugerido:" + codigoSugerido, "codigo de beca",codigoSugerido).ToUpper();
+                if (rgx.IsMatch(codigo)) throw new Exception("err de formato");
                 if (universidad.ValidaCodigoBeca(codigo)) throw new Exception("codigo existente");
                 nuevaBeca.Codigo=codigo;
                 //creamos una fecha valida:
@@ -326,7 +344,6 @@ namespace BecasGestor
         }
         private void btnCrearBeca_Click(object sender, EventArgs e)
         {
-
             try
             {
                 //asignamos y creamos beca para alumno seleccionado:
@@ -366,6 +383,34 @@ namespace BecasGestor
         private void dataGridBecas_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
 
+        }
+
+        private void btnCargarCuota_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //indicamos el alumno al que se le cargara la cuota. 
+                //una vez cargada la primer cuota se pasara al sigueinte alumno de la lista de universidad
+                string legajoPrimerCarga = universidad.RetornaLegajoPrimerAlumno();
+                string proximoLegajo = universidad.RetornaLegajoSiguiente(legajoPrimerCarga);
+                string legajoSugerido = legajoPrimerCarga;
+
+                while (proximoLegajo!=null)
+                {
+
+                    
+                    string legajoIngresado = Interaction.InputBox("ingrese alumno: \n alumno sugerido" + legajoSugerido, "alumno", legajoSugerido);
+                    proximoLegajo = universidad.RetornaLegajoSiguiente(legajoIngresado);
+                    legajoSugerido = proximoLegajo;
+                    
+
+
+
+
+                }
+
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
     }
 }

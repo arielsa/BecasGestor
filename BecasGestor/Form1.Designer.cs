@@ -37,6 +37,11 @@
             this.btnCrearBeca = new System.Windows.Forms.Button();
             this.dataGridBecasDeAlumno = new System.Windows.Forms.DataGridView();
             this.dataGridViewCuotas = new System.Windows.Forms.DataGridView();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.btnCargarCuota = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAlumno)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridBecas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridBecasDeAlumno)).BeginInit();
@@ -60,7 +65,7 @@
             // 
             // btnAddAlumno
             // 
-            this.btnAddAlumno.Location = new System.Drawing.Point(12, 233);
+            this.btnAddAlumno.Location = new System.Drawing.Point(324, 233);
             this.btnAddAlumno.Name = "btnAddAlumno";
             this.btnAddAlumno.Size = new System.Drawing.Size(116, 37);
             this.btnAddAlumno.TabIndex = 1;
@@ -70,7 +75,7 @@
             // 
             // btnBorrar
             // 
-            this.btnBorrar.Location = new System.Drawing.Point(297, 233);
+            this.btnBorrar.Location = new System.Drawing.Point(577, 233);
             this.btnBorrar.Name = "btnBorrar";
             this.btnBorrar.Size = new System.Drawing.Size(116, 37);
             this.btnBorrar.TabIndex = 2;
@@ -80,7 +85,7 @@
             // 
             // btnModificar
             // 
-            this.btnModificar.Location = new System.Drawing.Point(155, 233);
+            this.btnModificar.Location = new System.Drawing.Point(446, 233);
             this.btnModificar.Name = "btnModificar";
             this.btnModificar.Size = new System.Drawing.Size(116, 37);
             this.btnModificar.TabIndex = 3;
@@ -104,7 +109,7 @@
             // 
             // btnEliminarBeca
             // 
-            this.btnEliminarBeca.Location = new System.Drawing.Point(1351, 233);
+            this.btnEliminarBeca.Location = new System.Drawing.Point(1054, 233);
             this.btnEliminarBeca.Name = "btnEliminarBeca";
             this.btnEliminarBeca.Size = new System.Drawing.Size(116, 37);
             this.btnEliminarBeca.TabIndex = 7;
@@ -127,7 +132,7 @@
             this.dataGridBecasDeAlumno.AllowUserToAddRows = false;
             this.dataGridBecasDeAlumno.AllowUserToDeleteRows = false;
             this.dataGridBecasDeAlumno.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridBecasDeAlumno.Location = new System.Drawing.Point(12, 292);
+            this.dataGridBecasDeAlumno.Location = new System.Drawing.Point(12, 324);
             this.dataGridBecasDeAlumno.Name = "dataGridBecasDeAlumno";
             this.dataGridBecasDeAlumno.ReadOnly = true;
             this.dataGridBecasDeAlumno.RowHeadersWidth = 62;
@@ -140,7 +145,7 @@
             this.dataGridViewCuotas.AllowUserToAddRows = false;
             this.dataGridViewCuotas.AllowUserToDeleteRows = false;
             this.dataGridViewCuotas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewCuotas.Location = new System.Drawing.Point(649, 292);
+            this.dataGridViewCuotas.Location = new System.Drawing.Point(639, 324);
             this.dataGridViewCuotas.Name = "dataGridViewCuotas";
             this.dataGridViewCuotas.ReadOnly = true;
             this.dataGridViewCuotas.RowHeadersWidth = 62;
@@ -148,11 +153,62 @@
             this.dataGridViewCuotas.Size = new System.Drawing.Size(818, 215);
             this.dataGridViewCuotas.TabIndex = 10;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 542);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(232, 20);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Becas del almuno seleccionado";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 233);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(160, 20);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Alumno seleccionado";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(1337, 233);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(130, 20);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "Listado de becas";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(1319, 542);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(138, 20);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Cuotas de alumno";
+            // 
+            // btnCargarCuota
+            // 
+            this.btnCargarCuota.Location = new System.Drawing.Point(639, 545);
+            this.btnCargarCuota.Name = "btnCargarCuota";
+            this.btnCargarCuota.Size = new System.Drawing.Size(116, 37);
+            this.btnCargarCuota.TabIndex = 15;
+            this.btnCargarCuota.Text = "Cargar Cuota";
+            this.btnCargarCuota.UseVisualStyleBackColor = true;
+            this.btnCargarCuota.Click += new System.EventHandler(this.btnCargarCuota_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1546, 574);
+            this.ClientSize = new System.Drawing.Size(1546, 627);
+            this.Controls.Add(this.btnCargarCuota);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.dataGridViewCuotas);
             this.Controls.Add(this.dataGridBecasDeAlumno);
             this.Controls.Add(this.btnCrearBeca);
@@ -169,6 +225,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridBecasDeAlumno)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCuotas)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -183,6 +240,11 @@
         private System.Windows.Forms.Button btnCrearBeca;
         private System.Windows.Forms.DataGridView dataGridBecasDeAlumno;
         private System.Windows.Forms.DataGridView dataGridViewCuotas;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btnCargarCuota;
     }
 }
 
