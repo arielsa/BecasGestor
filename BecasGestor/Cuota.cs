@@ -30,11 +30,11 @@ namespace BecasGestor
         public Cuota(Cuota pCuota) : this(pCuota.Id, pCuota.MesAño, pCuota.FechaDePago, pCuota.Valor, pCuota.Abonado) 
         {
         }
+        //calculos de facturacion:
         public void IndicarAbonado(Alumno pAlumno)
         {
             Abonado = pAlumno;
         }
-
         public decimal RetornaDiferencia()
         {
             decimal becas= Abonado.RetornaTotalDeBecas();

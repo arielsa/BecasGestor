@@ -29,13 +29,13 @@ namespace BecasGestor
 
             universidad = new Universidad();
             // alumnos creados desde el inicio para agilizar las primeras pruebas
-            universidad.AgregarAlumno(new Ingresante("B00074791-T4","Hilario","Perez","11.111.111"));
-            universidad.AñadirLegajo("B00074791-T4");
-            universidad.AgregarAlumno(new Alumno("B00074792-T5","Teodosia","Gomez","21.111.112"));
-            universidad.AñadirLegajo("B00074792-T5");
-            universidad.AgregarAlumno(new Alumno("B00074793-T6","Jasinta","Pichimahuida","31.111.113"));
-            universidad.AñadirLegajo("B00074793-T6");
-            Mostrar(dataGridAlumno, universidad.RetornarListaAlumnos());
+            //universidad.AgregarAlumno(new Ingresante("B00074791-T4","Hilario","Perez","11.111.111"));
+            //universidad.AñadirLegajo("B00074791-T4");
+            //universidad.AgregarAlumno(new Alumno("B00074792-T5","Teodosia","Gomez","21.111.112"));
+            //universidad.AñadirLegajo("B00074792-T5");
+            //universidad.AgregarAlumno(new Alumno("B00074793-T6","Jasinta","Pichimahuida","31.111.113"));
+            //universidad.AñadirLegajo("B00074793-T6");
+            //Mostrar(dataGridAlumno, universidad.RetornarListaAlumnos());
 
         }
         Regex rgx;
@@ -421,7 +421,7 @@ namespace BecasGestor
                     //indicamos el mes-año que se desea cargar:
                     DateTime fechaActual = DateTime.Now;
                     rgx = new Regex(@"\d{1,2}.\d{4}");
-                    string ma = (Interaction.InputBox("ingrese mes de otorgamiento(max 2 digitos) y  año (4 digitos) \n como separador se admiten (/-[espacio])\n ej.03 2020,03-2020", "Mes", fechaActual.Month.ToString() + " " + fechaActual.Year.ToString()));
+                    string ma = (Interaction.InputBox("ingrese mes de otorgamiento(max 2 digitos) y  año (4 digitos) \n como separador se admiten (/-[espacio])\n ej.03 2020,03-2020", "Mes-Año", fechaActual.Month.ToString() + " " + fechaActual.Year.ToString()));
                     ma = Regex.Replace(ma, @"[/ -]", ".");
                     if (!(rgx.IsMatch(ma))) throw new Exception("error de formato");
                     var x = ma.Split(new string[] { "." }, StringSplitOptions.None);
@@ -429,11 +429,14 @@ namespace BecasGestor
                     int año = Int16.Parse(x[1]);
                     int dia = 1;
                     DateTime mesAños = RetronaDateTimeFecha(dia, mes, año);
+                    //validar fecha:
+                    string pMesAño = mesAños.Month.ToString() + "/" + mesAños.Year.ToString();
+                    if (alumnoSeleccionado.CuotaExistente(pMesAño)) throw new Exception("Cuota del mes existente ");
 
 
                     //indicamos fecha de pago:                
                     rgx = new Regex(@"\d{1,2}.\d{1,2}.\d{4}");
-                    string dma = (Interaction.InputBox("ingrese fecha de pago 2 digitos max para el dia, el mes max 2 digitos y  año 4 digitos \n como separador se admiten (/-[espacio])\n ej.6 03 2020,08-3-2020", "Mes", fechaActual.Day.ToString() + " " + fechaActual.Month.ToString() + " " + fechaActual.Year.ToString()));
+                    string dma = (Interaction.InputBox("ingrese fecha de pago 2 digitos max para el dia, el mes max 2 digitos y  año 4 digitos \n como separador se admiten (/-[espacio])\n ej.6 03 2020,08-3-2020", "Fecha de pago", fechaActual.Day.ToString() + " " + fechaActual.Month.ToString() + " " + fechaActual.Year.ToString()));
                     dma = Regex.Replace(dma, @"[/ -]", ".");
                     if (!(rgx.IsMatch(dma))) throw new Exception("error de formato");
                     x = dma.Split(new string[] { "." }, StringSplitOptions.None);
@@ -441,9 +444,7 @@ namespace BecasGestor
                     mes = Int16.Parse(x[1]);
                     año = Int16.Parse(x[2]);
                     DateTime fechaDePago = RetronaDateTimeFecha(dia, mes, año);
-                    //validar fecha:
-                    string pMesAño = mesAños.Month.ToString() + "/" + mesAños.Year.ToString();
-                    if (alumnoSeleccionado.CuotaExistente(pMesAño)) throw new Exception("Cuota del mes existente ");
+
 
 
 
@@ -477,6 +478,7 @@ namespace BecasGestor
                     //reiniciamos la carga, si la lista acaba lo indicamos por un mensaje de excepcion.
                     proximoLegajo = universidad.RetornaLegajoSiguiente(legajoIngresado);
                     legajoSugerido = proximoLegajo;
+                
                 }
 
 
