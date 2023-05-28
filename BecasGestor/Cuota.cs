@@ -42,9 +42,18 @@ namespace BecasGestor
         }
         public decimal Descuento()
         {
+            decimal beneficio = 1m;
            decimal diferencia =  RetornaDiferencia();
-            decimal descuento =  diferencia * Abonado.Beneficio;
+            if (Abonado.Categoria == "Ingresante") { beneficio = 0.1m; }
+            if (Abonado.Categoria == "Grado") { beneficio = 0.05m; }
+            if (Abonado.Categoria == "Posgrado") { beneficio = 0.01m; }
+
+            decimal descuento =  diferencia * beneficio;
             return descuento;
+        }
+        public decimal RetornaNeto()
+        {
+            return RetornaDiferencia()-Descuento();
         }
     }
 }

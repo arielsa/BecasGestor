@@ -441,6 +441,10 @@ namespace BecasGestor
                     mes = Int16.Parse(x[1]);
                     año = Int16.Parse(x[2]);
                     DateTime fechaDePago = RetronaDateTimeFecha(dia, mes, año);
+                    //validar fecha:
+                    string pMesAño = mesAños.Month.ToString() + "/" + mesAños.Year.ToString();
+                    if (alumnoSeleccionado.CuotaExistente(pMesAño)) throw new Exception("Cuota del mes existente ");
+
 
 
                     // pedimos el importe al usuario:
@@ -457,7 +461,7 @@ namespace BecasGestor
 
 
                     //creamos cuota valida
-                    string pMesAño=mesAños.Month.ToString() + "/"+mesAños.Year.ToString();
+                    
 
                     Cuota cuotaCreada = new Cuota(cuotaID, pMesAño, fechaDePago, importeIngresadoDecimal, new Alumno(alumnoSeleccionado));
 
@@ -469,6 +473,7 @@ namespace BecasGestor
                     //actualizamos la grilla:
                     Alumno a = new Alumno(dataGridAlumno.SelectedRows[0].Cells[0].Value.ToString());
                     Mostrar(dataGridViewCuotas, universidad.RetornaListaCuotasDeAlumno(a));
+                    MessageBox.Show("Cuota cargada");
                     //reiniciamos la carga, si la lista acaba lo indicamos por un mensaje de excepcion.
                     proximoLegajo = universidad.RetornaLegajoSiguiente(legajoIngresado);
                     legajoSugerido = proximoLegajo;

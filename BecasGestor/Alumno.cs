@@ -79,7 +79,10 @@ namespace BecasGestor
         {
             lc.Add(pCuota);
         }
-        
+        public bool CuotaExistente(string pMesAño)
+        {
+            return lc.Exists(x => x.MesAño == pMesAño);
+        }
 
 
     }

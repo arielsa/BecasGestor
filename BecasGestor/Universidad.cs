@@ -197,8 +197,8 @@ namespace BecasGestor
                         Fecha_de_pago = c.FechaDePago,
                         Importe_cuota = c.Valor,
                         Importe_Becas=c.Abonado.RetornaTotalDeBecas(),
-                        Beneficio =  c.Descuento(),
-                        Neto_a_pagar= c.RetornaDiferencia(),
+                        Beneficio =  c.Descuento().ToString("0.##"),
+                        Neto_a_pagar= c.RetornaNeto(),
 
                     }).ToArray();
         }
