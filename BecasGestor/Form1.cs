@@ -299,8 +299,10 @@ namespace BecasGestor
             try
             {
                 if (dataGridAlumno.Rows.Count == 0) { dataGridBecasDeAlumno.DataSource = null; throw new Exception(); }
+                if (dataGridAlumno.Rows.Count == 0) { dataGridViewCuotas.DataSource = null; throw new Exception(); }
                 Alumno a = new Alumno(dataGridAlumno.SelectedRows[0].Cells[0].Value.ToString());
                 Mostrar(dataGridBecasDeAlumno, universidad.RetornaListaBecasDeAlumno(a));
+                Mostrar(dataGridViewCuotas, universidad.RetornaListaCuotasDeAlumno(a));
             }
             catch (Exception) { }//dejamos vacio el catch para eitar el errror en la falta de allumnos
         }
@@ -397,17 +399,81 @@ namespace BecasGestor
 
                 while (proximoLegajo!=null)
                 {
-
-                    
+                    rgx = new Regex(@"[A-Z]\d{8}-[A-Z]\d");
                     string legajoIngresado = Interaction.InputBox("ingrese alumno: \n alumno sugerido" + legajoSugerido, "alumno", legajoSugerido);
+                    if (!(rgx.IsMatch(legajoIngresado)) && legajoIngresado.Length > 12) throw new Exception("Error de formato");
+                    if (!(universidad.VerificarNumLegajo(legajoIngresado))) throw new Exception("numero de legajo no existente");
+
+                    // con el numero de legajo traemos traemo un alumno para clonarlo en la cuota:
+                    Alumno alumnoSeleccionado =  universidad.RetornaAlumnoPorLegajo(legajoIngresado);
+
+
+                    //indicamos el ID de la cuota. el sistema sugiere y provee uno por defecto                
+                    string IDsugerido = GeneradorID();
+                    rgx = new Regex(@"FACT-[A-C]-\d{6}");
+                    string cuotaID = (Interaction.InputBox("Ingrese ID con el formato correcto\nejemplo:FACT-A-000111 \nID sugerido:" + IDsugerido, "ID", IDsugerido)).ToUpper();
+                    if (!(rgx.IsMatch(cuotaID))) throw new Exception("Error de formato");
+                    //el ID se verificara en el listado de la universidad para todos los alumnos
+                    if (universidad.FiltrarIDFact(cuotaID)) throw new Exception("ID existente");
+                    //a asu vez cada alumno cuenta con su propia lista de cuotas pero la verificacion se genera en la universidad
+                    //de una manera mas global.
+
+                    //indicamos el mes-año que se desea cargar:
+                    DateTime fechaActual = DateTime.Now;
+                    rgx = new Regex(@"\d{1,2}.\d{4}");
+                    string ma = (Interaction.InputBox("ingrese mes de otorgamiento(max 2 digitos) y  año (4 digitos) \n como separador se admiten (/-[espacio])\n ej.03 2020,03-2020", "Mes", fechaActual.Month.ToString() + " " + fechaActual.Year.ToString()));
+                    ma = Regex.Replace(ma, @"[/ -]", ".");
+                    if (!(rgx.IsMatch(ma))) throw new Exception("error de formato");
+                    var x = ma.Split(new string[] { "." }, StringSplitOptions.None);
+                    int mes = Int16.Parse(x[0]);
+                    int año = Int16.Parse(x[1]);
+                    int dia = 1;
+                    DateTime mesAños = RetronaDateTimeFecha(dia, mes, año);
+
+
+                    //indicamos fecha de pago:                
+                    rgx = new Regex(@"\d{1,2}.\d{1,2}.\d{4}");
+                    string dma = (Interaction.InputBox("ingrese fecha de pago 2 digitos max para el dia, el mes max 2 digitos y  año 4 digitos \n como separador se admiten (/-[espacio])\n ej.6 03 2020,08-3-2020", "Mes", fechaActual.Day.ToString() + " " + fechaActual.Month.ToString() + " " + fechaActual.Year.ToString()));
+                    dma = Regex.Replace(dma, @"[/ -]", ".");
+                    if (!(rgx.IsMatch(dma))) throw new Exception("error de formato");
+                    x = dma.Split(new string[] { "." }, StringSplitOptions.None);
+                    dia = Int16.Parse(x[0]);
+                    mes = Int16.Parse(x[1]);
+                    año = Int16.Parse(x[2]);
+                    DateTime fechaDePago = RetronaDateTimeFecha(dia, mes, año);
+
+
+                    // pedimos el importe al usuario:
+                    rgx = new Regex(@"\d{1,6}(,\d{1,2})?");
+                    string importeIngresado = Interaction.InputBox("ingrese importe de cuota \n se admiten punto(.) o coma (,) para indicar decimal ", "improte", "3000.00");
+                    importeIngresado = Regex.Replace(importeIngresado, @"[.]", ",");
+                    if (!(rgx.IsMatch(importeIngresado))) throw new Exception("error de formato");
+                    decimal importeIngresadoDecimal = decimal.Parse(importeIngresado);
+
+                    //verificamos que las becas no lleguen al 100% de la cuota:
+                    decimal totalBecas = alumnoSeleccionado.RetornaTotalDeBecas();
+                    decimal diferencia = importeIngresadoDecimal - totalBecas;
+                    if (diferencia<=0) throw new Exception("Los montos de las becas superan o igualan el monto de la cuota.\n Gestione las becas de :"+alumnoSeleccionado.Nombre+" "+alumnoSeleccionado.Apellido+"\nLegajo: "+alumnoSeleccionado.Legajo );
+
+
+                    //creamos cuota valida
+                    string pMesAño=mesAños.Month.ToString() + "/"+mesAños.Year.ToString();
+
+                    Cuota cuotaCreada = new Cuota(cuotaID, pMesAño, fechaDePago, importeIngresadoDecimal, new Alumno(alumnoSeleccionado));
+
+                    //actualizamos grillas de becas por universidad y becas por alumno:
+
+
+                    //invocamos el metodo asignarCuotaAAlumno este metodo 
+                    universidad.AsignaCuotaAAlumno(alumnoSeleccionado, cuotaCreada);
+                    //actualizamos la grilla:
+                    Alumno a = new Alumno(dataGridAlumno.SelectedRows[0].Cells[0].Value.ToString());
+                    Mostrar(dataGridViewCuotas, universidad.RetornaListaCuotasDeAlumno(a));
+                    //reiniciamos la carga, si la lista acaba lo indicamos por un mensaje de excepcion.
                     proximoLegajo = universidad.RetornaLegajoSiguiente(legajoIngresado);
                     legajoSugerido = proximoLegajo;
-                    
-
-
-
-
                 }
+
 
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }

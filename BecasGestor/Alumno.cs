@@ -18,7 +18,7 @@ namespace BecasGestor
         public string Apellido { get; set; }    
         public string DNI { get; set; }
 
-        public  decimal Beneficio;
+        public  decimal Beneficio=0m;
 
         public Alumno()
         {
@@ -58,6 +58,11 @@ namespace BecasGestor
             return becas;
                  
         }
+        public List<Cuota> RetornaListaCuotas(Alumno A)
+        {
+            List<Cuota> cuotas = (from b in lc select new Cuota(b.Id, b.MesAño, b.FechaDePago,b.Valor,A)).ToList();
+            return cuotas;
+        }
 
         public int RetornaCantidadBecas()
         {
@@ -69,6 +74,10 @@ namespace BecasGestor
             decimal total = 0;
             foreach (Beca b in lb) { total += b.Importe; }
             return total;
+        }
+        public void AgregarCuota(Cuota pCuota)
+        {
+            lc.Add(pCuota);
         }
         
 
@@ -126,7 +135,7 @@ namespace BecasGestor
         }
         public Posgrado(string pLegajo, string pNombre = "", string pApellido = "", string pDNI = "") : base(pLegajo, pNombre, pApellido, pDNI)
         { Categoria = "Posgrado"; }
-        public int Beneficio = 1;
+        public new decimal Beneficio = 0.01m;
         
     }
 }

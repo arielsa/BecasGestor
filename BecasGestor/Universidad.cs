@@ -89,6 +89,7 @@ namespace BecasGestor
             }).ToArray();
         }
 
+
         public bool VerificarNumLegajo(string pNumLegajo)
         {
             return ll.Exists(l => l == pNumLegajo);
@@ -185,6 +186,23 @@ namespace BecasGestor
                 Importe = b.Importe,
             }).ToArray();
         }
+        public object RetornaListaCuotasDeAlumno(Alumno pAlumno)
+        {
+            Alumno A = la.Find(x => x.Legajo == pAlumno.Legajo);
+            return (from c in A.RetornaListaCuotas(A)
+                    select new
+                    {
+                        ID = c.Id,
+                        Mes_Año = c.MesAño,
+                        Fecha_de_pago = c.FechaDePago,
+                        Importe_cuota = c.Valor,
+                        Importe_Becas=c.Abonado.RetornaTotalDeBecas(),
+                        Beneficio =  c.Descuento(),
+                        Neto_a_pagar= c.RetornaDiferencia(),
+
+                    }).ToArray();
+        }
+
         public void RemoverBeca(Alumno alumnoSeleccionado, string codigo)
         {
             Alumno a = la.Find(x => x.Legajo == alumnoSeleccionado.Legajo);
@@ -270,13 +288,42 @@ namespace BecasGestor
             try
             {            
                 int index = la.FindIndex(x => x.Legajo == pLegajo);
-                return la[index+1].Legajo;
+                string ultimoLegajo = la.Last().Legajo;
+                int ultimo = la.FindIndex(x=>x.Legajo==ultimoLegajo);
+
+                if (index == ultimo)throw new Exception("fin de la lista");
+
+                string proximo = la[index+1].Legajo;
+
+                return proximo;
 
             }
             catch (Exception ex) { throw ex; }
 
         }
-        
+
+        public void AsignaCuotaAAlumno(Alumno pAlumno, Cuota pCuota)
+        {
+            try
+            {
+                //comprobamos la existencia del alumno
+                Alumno A = la.Find(a => a.Legajo == pAlumno.Legajo);
+                Cuota C = new Cuota(pCuota);
+                if (A == null) throw new Exception(" alumno no encontrado");
+                //le pasamos un clon del alumno a la cuota
+                C.IndicarAbonado(new Alumno(A)); 
+                //le pasamos un clon de la cuota al alumno
+                A.AgregarCuota(new Cuota(C));
+                //agregamos la cuota dentro de la lista
+                lc.Add(C);  
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+        public Alumno RetornaAlumnoPorLegajo(string legajoIngresado)
+        {
+            Alumno A = la.Find(x => x.Legajo == legajoIngresado);
+            return A;
+        }
 
     }
 }
